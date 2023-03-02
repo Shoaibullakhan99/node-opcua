@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>LED Bending Machine</title>
+    <link rel="stylesheet" href="./bootstrap/bootstrap.min.css">
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="./style.css">
+  </head>
+  <body>
+    <header>
+    <nav class="navbar navbar-dark bg-dark fixed-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">LED Bending Machine</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar" aria-labelledby="offcanvasDarkNavbarLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel">SS Automation Solutions</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="./alarms.html">Alarms</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark">
+                  <li><a class="dropdown-item" href="#">Data</a></li>
+                  <li><a class="dropdown-item" href="#">User Manual</a></li>
+                  <li>
+                    <hr class="dropdown-divider">
+                  </li>
+                  <li><a class="dropdown-item" href="./graph.html">Graphs</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+    </header>
+    <main>
+      <div class="container d-flex">
+        <div class="col">
+          <div class="row">
+            <div class="d-flex flex-column mb-3">
+            <div class="p-2">Machine Status <p class="on-off" id="machine-status">OFF</p></div>
+            <div class="p-2">Cycle Condition <p id="cycle-condition">NONE</p></div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="d-flex flex-column mb-3">
+              <div class="p-2">Control ON<p class="on-off" id="auto-cycle">OFF</p></div>
+              <div class="p-2">Robot Running<p class="on-off" id="robot-status">OFF</p></div>
+              <div class="p-2">Vibratory Bowl<p class="on-off" id="vibratory-status">OFF</p></div>
+              <div class="p-2">Current Running Variant<p id="variant-name">NONE</p></div>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="row">
+            <div class="d-flex flex-column mb-3">
+              <div class="p-2">Indexing Status<p id="indexing-status"></p></div>
+              <div class="p-2">Trimmimg Status<p class="on-off" id="trimming-status">OFF</p></div>
+              <div class="p-2 ">Bending Status<p class="on-off" id="bending-status">OFF</p></div>
+              <div class="p-2 ">Cylinder Status<p class="on-off" id="cylinder-status">OFF</p></div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="d-flex flex-column mb-3">
+              <div class="p-2">Voltage: <p id="volt"></p><span></span></div>
+              <div class="p-2">Current: <p id="current"></p><span></span></div>
+              <!-- <div class="p-2">Frequency: <p id="frequency"></p><span>Hz</span></div>
+              <div class="p-2">Power Factor: <p id="power-factor">100</p><span>W</span></div> -->
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="p-2">Frequency: <p id="frequency"></p><span></span></div>
+          <div class="p-2">Power Factor: <p id="power-factor"></p><span></span></div>
+          <!-- <div class="p-2">Robot: <p id="current"></p><span>A</span></div> -->
+          <div class="p-2">Bending Angle: <p id="bending-angle"></p></div>
+        </div>
+      </div>
+      </div>
+    </main>
+  </body>
+  <script src="./bootstrap/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script> -->
+  <script>
+    const machineStatus = document.getElementById("machine-status");
+    const frequency = document.getElementById("frequency");
+    const power = document.getElementById("power-factor");
+    const current = document.getElementById("current");
+    const voltage = document.getElementById("volt");
+    const indexingstatus = document.getElementById('indexing-status')
+    const vibratoryBowl = document.getElementById("vibratory-status")
+    const bendingAngle = document.getElementById("bending-angle")
+    const cycleCondition = document.getElementById('cycle-condition');
+    const robotStatus = document.getElementById('robot-status');
+    const variant = document.getElementById('variant-name');
+    const controlON = document.getElementById('auto-cycle');
+
+    setInterval(() => {
+      fetch("http://localhost/data")
+        .then(res => res.json())
+        .then(data => {
+          machineStatus.innerHTML = data.machineStatus? "ON" : "OFF";
+              (data.machineStatus)?
+                machineStatus.style.border = "thick solid green":
+              machineStatus.style.border = "thick solid red";
+          
+          //Parameters
+          frequency.textContent = data.frequency.toFixed(2) + "  (Hz)" // ? "ON" : "OFF";
+          // frequency.style.textDecoration = "underline";
+  
+          current.textContent = data.current.toFixed(2) + "  (A)"
+
+          power.textContent = data.power.toFixed(2) + "  (KW)"
+          
+          voltage.textContent = data.voltage.toFixed(2) + "  (V)"
+          
+          //Indexing Status
+          indexingstatus.innerHTML = data.indexingServo ? "ON" : "OFF"
+          data.indexingServo ? 
+          indexingstatus.style.border = "thick solid green": 
+          indexingstatus.style.border = "thick solid red";
+          
+          //Vibratory Bowl 
+          vibratoryBowl.innerHTML = data.vibratoryBowl? "ON" : "OFF";
+          (data.vibratoryBowl)? 
+          vibratoryBowl.style.border = "thick solid green" : 
+          vibratoryBowl.style.border = "thick solid red";
+            
+          //Robot Status
+          robotStatus.innerHTML = data.running ? "ON": "OFF";
+          (data.running)?
+          robotStatus.style.border = "thick solid green":
+          robotStatus.style.border = "thick solid red";
+
+          //variant Selection
+          let variantOne = data.variantOne;
+          let variantTwo = data.variantTwo;
+          let variantThree = data.variantThree;
+          let variantFour = data.variantFour;
+             (variantOne)? variant.innerHTML = "Variant 1" :
+              (variantTwo)? variant.innerHTML = "Variant 2" : 
+                (variantThree)? variant.innerHTML = "Variant 3" : 
+                 (variantFour)? variant.innerHTML = "Variant 4" : 
+                   variant.innerHTML = "NONE";
+
+               //Bending Status Of LED
+              let ledOK = data.ledOK;
+              let ledNotOK = data.ledNotOK;
+              if(ledOK){
+                bendingAngle.innerHTML = "OK"
+                bendingAngle.style.border = "thick dashed green";
+              }
+              if(ledNotOK){
+                bendingAngle.innerHTML = "NOT OK"
+                bendingAngle.style.border = "thick dashed green";
+              }
+
+              //Cycle Condition
+              let manualSS = data.manualSS;
+              let autoSS = data.autoSS;
+              if(manualSS){
+                cycleCondition.innerHTML = "Manual Cycle";
+                cycleCondition.style.border = "thick solid green";
+              } 
+              // if(autoSS){
+              //   cycleCondition.innerHTML = "Auto Cycle";
+              //   cycleCondition.style.border = "thick solid orange";
+              // }
+
+              //auto-cycle
+              let autoCycle = data.controlON;
+              if(autoCycle){
+                controlON.innerHTML = "ON";
+                controlON.style.border = "thick solid green"; 
+              } else {
+                controlON.innerHTML = "OFF";
+              controlON.style.border = "thick solid red";
+              }
+        })
+        .catch(err => console.error(err));
+    }, 1000);
+
+
+    // send a request to the server every 10 seconds
+// setInterval(function() {
+//   fetch('/ping')
+//     .then(function(response) {
+//       if (!response.ok) {
+//         // if the server is not running, reload the page
+//         location.reload();
+//       }
+//     });
+// }, 10000);
+
+  </script>
+</html>

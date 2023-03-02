@@ -1,0 +1,17 @@
+body {
+    background-color: rgb(241, 241, 241)
+}
+
+.container {
+    margin-top: 60px;
+}
+
+.switch {
+    margin-top: 60px;;
+    padding: 20px;
+}
+
+.space-alert {
+    margin: 0px 20px;
+    margin-bottom: 20px;
+}
