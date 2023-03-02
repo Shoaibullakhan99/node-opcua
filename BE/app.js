@@ -381,8 +381,6 @@ async.series([
   }
   );
 
-// http method ------GET-----rest api to get the data //
-//Rest api to get the data at the front end and store it at the database, also configured at the database with the name of Led_Bending
 //..............Application program interface...........
 app.get('/data', (req, res) => {
 const autoSS = app.get('autoSS');
